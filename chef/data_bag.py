@@ -1,4 +1,3 @@
-import six
 import abc
 import collections
 
@@ -10,7 +9,7 @@ class DataBagMeta(ChefObjectMeta, abc.ABCMeta):
     """A metaclass to allow DataBag to use multiple inheritance."""
 
 
-class DataBag(six.with_metaclass(DataBagMeta, ChefObject, ChefQuery)):
+class DataBag(ChefObject, ChefQuery, metaclass=DataBagMeta):
     """A Chef data bag object.
 
     Data bag items are available via the mapping API. Evaluation works in the
@@ -19,7 +18,7 @@ class DataBag(six.with_metaclass(DataBagMeta, ChefObject, ChefQuery)):
 
         bag = DataBag('versions')
         item = bag['web']
-        for name, item in six.iteritems(bag):
+        for name, item in bag.items()):
             print item['qa_version']
     """
 
@@ -32,7 +31,7 @@ class DataBag(six.with_metaclass(DataBagMeta, ChefObject, ChefQuery)):
         return DataBagItem(self, name, api=api)
 
 
-class DataBagItem(six.with_metaclass(DataBagMeta, ChefObject, collections.MutableMapping)):
+class DataBagItem(ChefObject, collections.MutableMapping, metaclass=DataBagMeta):
     """A Chef data bag item object.
 
     Data bag items act as normal dicts and can contain arbitrary data.
@@ -96,7 +95,7 @@ class DataBagItem(six.with_metaclass(DataBagMeta, ChefObject, collections.Mutabl
         keyword arguments."""
         api = api or ChefAPI.get_global()
         obj = cls(bag, name, api, skip_load=True)
-        for key, value in six.iteritems(kwargs):
+        for key, value in kwargs.items():
             obj[key] = value
         obj['id'] = name
         api.api_request('POST', cls.url+'/'+str(bag), data=obj.raw_data)

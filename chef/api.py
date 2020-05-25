@@ -5,8 +5,8 @@ import re
 import socket
 import subprocess
 import threading
+import urllib
 import weakref
-import six
 
 import pkg_resources
 
@@ -58,7 +58,7 @@ class ChefAPI(object):
 
     def __init__(self, url, key, client, timeout=None, version='0.10.8', headers={}, ssl_verify=True):
         self.url = url.rstrip('/')
-        self.parsed_url = six.moves.urllib.parse.urlparse(self.url)
+        self.parsed_url = urllib.parse.urlparse(self.url)
         if not isinstance(key, Key):
             key = Key(key)
         if not key.key:
@@ -67,7 +67,7 @@ class ChefAPI(object):
         self.client = client
         self.timeout = timeout
         self.version = version
-        self.headers = dict((k.lower(), v) for k, v in six.iteritems(headers))
+        self.headers = dict((k.lower(), v) for k, v in headers.items())
         self.version_parsed = pkg_resources.parse_version(self.version)
         self.platform = self.parsed_url.hostname == 'api.opscode.com'
         self.ssl_verify = ssl_verify
@@ -198,12 +198,12 @@ class ChefAPI(object):
             user_id=self.client)
         request_headers = {}
         request_headers.update(self.headers)
-        request_headers.update(dict((k.lower(), v) for k, v in six.iteritems(headers)))
+        request_headers.update(dict((k.lower(), v) for k, v in headers.items()))
         request_headers['x-chef-version'] = self.version
         request_headers.update(auth_headers)
         try:
             response = self._request(method, self.url + path, data, dict(
-                (k.capitalize(), v) for k, v in six.iteritems(request_headers)))
+                (k.capitalize(), v) for k, v in request_headers.items()))
         except requests.ConnectionError as e:
             raise ChefServerError(str(e))
         except requests.Timeout as e:
@@ -216,7 +216,7 @@ class ChefAPI(object):
         return response
 
     def api_request(self, method, path, headers={}, data=None):
-        headers = dict((k.lower(), v) for k, v in six.iteritems(headers))
+        headers = dict((k.lower(), v) for k, v in headers.items())
         headers['accept'] = 'application/json'
         if data is not None:
             headers['content-type'] = 'application/json'

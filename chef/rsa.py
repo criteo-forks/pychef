@@ -1,4 +1,3 @@
-import six
 import sys
 from ctypes import *
 from ctypes.util import find_library
@@ -141,10 +140,10 @@ class Key(object):
         self.public = False
         if not fp:
             return
-        if isinstance(fp, six.binary_type) and fp.startswith(b'-----'):
+        if isinstance(fp, bytes) and fp.startswith(b'-----'):
             # PEM formatted text
             self.raw = fp
-        elif isinstance(fp, six.string_types):
+        elif isinstance(fp, str):
             self.raw = open(fp, 'rb').read()
         else:
             self.raw = fp.read()
@@ -178,7 +177,7 @@ class Key(object):
     def private_encrypt(self, value, padding=RSA_PKCS1_PADDING):
         if self.public:
             raise SSLError('private method cannot be used on a public key')
-        if six.PY3 and not isinstance(value, bytes):
+        if not isinstance(value, bytes):
             buf = create_string_buffer(value.encode(), len(value))
         else:
             buf = create_string_buffer(value, len(value))
@@ -190,7 +189,7 @@ class Key(object):
         return output.raw[:ret]
 
     def public_decrypt(self, value, padding=RSA_PKCS1_PADDING):
-        if six.PY3 and not isinstance(value, bytes):
+        if not isinstance(value, bytes):
             buf = create_string_buffer(value.encode(), len(value))
         else:
             buf = create_string_buffer(value, len(value))
@@ -199,7 +198,7 @@ class Key(object):
         ret = RSA_public_decrypt(len(buf), buf, output, self.key, padding)
         if ret <= 0:
             raise SSLError('Unable to decrypt data')
-        if six.PY3 and isinstance(output.raw, bytes):
+        if isinstance(output.raw, bytes):
             return output.raw[:ret].decode()
         else:
             return output.raw[:ret]

@@ -1,4 +1,3 @@
-import six
 import collections
 
 import pkg_resources
@@ -36,7 +35,7 @@ class ChefObjectMeta(type):
         cls.api_version_parsed = pkg_resources.parse_version(cls.api_version)
 
 
-class ChefObject(six.with_metaclass(ChefObjectMeta, object)):
+class ChefObject(metaclass=ChefObjectMeta):
     """A base class for Chef API objects."""
     types = {}
 
@@ -63,7 +62,7 @@ class ChefObject(six.with_metaclass(ChefObjectMeta, object)):
         self._populate(data)
 
     def _populate(self, data):
-        for name, cls in six.iteritems(self.__class__.attributes):
+        for name, cls in self.__class__.attributes.items():
             if name in data:
                 value = cls(data[name])
             else:
@@ -83,7 +82,7 @@ class ChefObject(six.with_metaclass(ChefObjectMeta, object)):
         """
         api = api or ChefAPI.get_global()
         cls._check_api_version(api)
-        names = [name for name, url in six.iteritems(api[cls.url])]
+        names = [name for name, url in api[cls.url].items()]
         return ChefQuery(cls, names, api)
 
     @classmethod
@@ -94,7 +93,7 @@ class ChefObject(six.with_metaclass(ChefObjectMeta, object)):
         api = api or ChefAPI.get_global()
         cls._check_api_version(api)
         obj = cls(name, api, skip_load=True)
-        for key, value in six.iteritems(kwargs):
+        for key, value in kwargs.items():
             setattr(obj, key, value)
         api.api_request('POST', cls.url, data=obj)
         return obj
@@ -122,7 +121,7 @@ class ChefObject(six.with_metaclass(ChefObjectMeta, object)):
             'json_class': 'Chef::'+self.__class__.__name__,
             'chef_type': self.__class__.__name__.lower(),
         }
-        for attr in six.iterkeys(self.__class__.attributes):
+        for attr in self.__class__.attributes.keys():
             d[attr] = getattr(self, attr)
         return d
 

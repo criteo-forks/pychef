@@ -1,7 +1,6 @@
-import six
 import collections
 import copy
-import six.moves.urllib.parse
+from urllib.parse import urlencode
 
 from chef.api import ChefAPI
 from chef.base import ChefQuery, ChefObject
@@ -32,17 +31,17 @@ class SearchRow(dict):
 
 class Search(collections.Sequence):
     """A search of the Chef index.
-    
+
     The only required argument is the index name to search (eg. node, role, etc).
     The second, optional argument can be any Solr search query, with the same semantics
     as Chef.
-    
+
     Example::
-    
+
         for row in Search('node', 'roles:app'):
             print row['roles']
             print row.object.name
-    
+
     .. versionadded:: 0.1
 
     You can also do partial searches if you are using chef server >= 12.
@@ -64,7 +63,7 @@ class Search(collections.Sequence):
         self.name = index
         self.api = api or ChefAPI.get_global()
         self._args = dict(q=q, rows=rows, start=start)
-        self.url = self.__class__.url + '/' + self.name + '?' + six.moves.urllib.parse.urlencode(self._args)
+        self.url = self.__class__.url + '/' + self.name + '?' + urlencode(self._args)
         self._filter_result = filter_result
 
     @property
@@ -103,7 +102,7 @@ class Search(collections.Sequence):
             if value.step is not None and value.step != 1:
                 raise ValueError('Cannot use a step other than 1')
             return self.start(self._args['start']+value.start).rows(value.stop-value.start)
-        if isinstance(value, six.string_types):
+        if isinstance(value, str):
             return self[self.index(value)]
         row_value = self.data['rows'][value]
         # Check for null rows, just in case
@@ -129,5 +128,5 @@ class Search(collections.Sequence):
     @classmethod
     def list(cls, api=None):
         api = api or ChefAPI.get_global()
-        names = [name for name, url in six.iteritems(api[cls.url])]
+        names = [name for name, url in api[cls.url].items()]
         return ChefQuery(cls, names, api)

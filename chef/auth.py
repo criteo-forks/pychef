@@ -1,4 +1,4 @@
-import six.moves
+
 import base64
 import datetime
 import hashlib
@@ -9,7 +9,7 @@ def _ruby_b64encode(value):
     into 60-character chunks.
     """
     b64 = base64.b64encode(value)
-    for i in six.moves.range(0, len(b64), 60):
+    for i in range(0, len(b64), 60):
         yield b64[i:i + 60].decode()
 
 def ruby_b64encode(value):

@@ -1,4 +1,3 @@
-import six
 import functools
 
 from chef.api import ChefAPI, autoconfigure
@@ -37,7 +36,7 @@ class Roledef(object):
         self.query = query
         self.api = api
         self.hostname_attr = hostname_attr
-        if isinstance(self.hostname_attr, six.string_types):
+        if isinstance(self.hostname_attr, str):
             self.hostname_attr = (self.hostname_attr,)
         self.environment = environment
 
@@ -190,7 +189,7 @@ def chef_tags(*tags, **kwargs):
     .. versionadded:: 0.2.1
     """
     # Allow passing a single iterable
-    if len(tags) == 1 and not isinstance(tags[0], six.string_types):
+    if len(tags) == 1 and not isinstance(tags[0], str):
         tags = tags[0]
     query = ' AND '.join('tags:%s'%tag.strip() for tag in tags)
     return chef_query(query, **kwargs)
