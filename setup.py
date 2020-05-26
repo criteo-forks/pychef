@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'PyChef',
-    version = '0.4.0+criteo',
+    version = '0.4.1+criteo',
     packages = find_packages(),
     author = 'Noah Kantrowitz',
     author_email = 'noah@coderanger.net',
