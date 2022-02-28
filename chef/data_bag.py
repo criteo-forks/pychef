@@ -31,7 +31,7 @@ class DataBag(ChefObject, ChefQuery, metaclass=DataBagMeta):
         return DataBagItem(self, name, api=api)
 
 
-class DataBagItem(ChefObject, collections.MutableMapping, metaclass=DataBagMeta):
+class DataBagItem(ChefObject, collections.abc.MutableMapping, metaclass=DataBagMeta):
     """A Chef data bag item object.
 
     Data bag items act as normal dicts and can contain arbitrary data.
