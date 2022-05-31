@@ -29,7 +29,7 @@ class SearchRow(dict):
         return self._object
 
 
-class Search(collections.Sequence):
+class Search(collections.abc.Sequence):
     """A search of the Chef index.
 
     The only required argument is the index name to search (eg. node, role, etc).
